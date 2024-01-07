@@ -344,6 +344,7 @@ def amenities(url):
             target_div = soup.find('div', class_='arrange__09f24__LDfbs gutter-2__09f24__CCmUo layout-wrap__09f24__GEBlv layout-2-units__09f24__PsGVW css-1qn0b6x')
             if target_div:
                 spans = target_div.find_all('span')
+                st.write(spans)
                 services = [span.get_text().strip() for span in spans if span.get_text().strip()]
 
     except Exception as e:
