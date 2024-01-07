@@ -325,8 +325,9 @@ def amenities(url):
             try:
                 button_xpath = '//*[@id="main-content"]/section[4]/div[2]/button'
                 WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, button_xpath))).click()
-            except:
-                print('')
+            except Exception as e:
+                print(e)
+                st.write(e)
 
             # BeautifulSoup parsing
             soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -336,7 +337,8 @@ def amenities(url):
                 services = [span.get_text().strip() for span in spans if span.get_text().strip()]
 
     except Exception as e:
-        print('')
+        print(e)
+        st.write(e)
 
     return services
 
@@ -518,7 +520,7 @@ def create_profile(profile_select):
         """,
         unsafe_allow_html=True)
 
-    if 'Score' not in healthscore[0:]:
+    if 'Score' not in healthscore:
         x = 'Health Score: N/A'
     else:
         x = healthscore[3].split('Powered')
@@ -536,7 +538,13 @@ def create_profile(profile_select):
 
 
     if len(website_link) > 0:
-        link = str(website_link[0])
+        if len(website_link)>1:
+            if name[:5] not in website_link[0]:
+                link = str(website_link[1])
+            else:
+                link = str(website_link[0])
+        else:
+            link = str(website_link[0])
         if 'www' in link and 'https://' not in link:
             link = 'https://'+link
         elif 'https://' not in link and 'www.' not in link:
@@ -569,27 +577,11 @@ def create_profile(profile_select):
         unsafe_allow_html=True)
 
     c3.markdown('##### All Ratings')
-    my_bar = c3.progress(0, text='5 Star Ratings')
-    my_bar2 = c3.progress(0, text='4 Star Ratings')
-    my_bar3 = c3.progress(0, text='3 Star Ratings')
-    my_bar4 = c3.progress(0, text='2 Star Ratings')
-    my_bar5 = c3.progress(0, text='1 Star Ratings')
-    for percent_complete in range(int(progress_ratings[0])):
-        time.sleep(0.002)
-        my_bar.progress(percent_complete + 1, text='5 Star Ratings')
-    for percent_complete in range(int(progress_ratings[1])):
-        time.sleep(0.005)
-        my_bar2.progress(percent_complete + 1, text='4 Star Ratings')
-    for percent_complete in range(int(progress_ratings[2])):
-        time.sleep(0.005)
-        my_bar3.progress(percent_complete + 1, text='3 Star Ratings')
-    for percent_complete in range(int(progress_ratings[3])):
-        time.sleep(0.005)
-        my_bar4.progress(percent_complete + 1, text='2 Star Ratings')
-    for percent_complete in range(int(progress_ratings[4])):
-        time.sleep(0.005)
-        my_bar5.progress(percent_complete + 1, text='1 Star Ratings')
-
+    c3.progress(int(progress_ratings[0]), text='5 Star Ratings')
+    c3.progress(int(progress_ratings[1]), text='4 Star Ratings')
+    c3.progress(int(progress_ratings[2]), text='3 Star Ratings')
+    c3.progress(int(progress_ratings[3]), text='2 Star Ratings')
+    c3.progress(int(progress_ratings[4]), text='1 Star Ratings')
 
 
     with st.expander("Open Hours"):
@@ -605,6 +597,7 @@ def create_profile(profile_select):
         services = amenities(url)
 
     with st.expander("Amenities and More"):
+        st.write(services)
         if len(services) > 0:
             if 'Health Score' in services:
                 services = services[3:]
