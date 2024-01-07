@@ -9,17 +9,9 @@ from streamlit_image_select import image_select
 import re
 import numpy as np
 import urllib.parse
-import selenium
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-import time
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from dateutil import parser
 from sklearn.metrics.pairwise import cosine_similarity
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+
 
 
 st.cache_data()
@@ -312,48 +304,48 @@ def find_dates_and_reviews(data_list):
 
     return dates_and_reviews
 
-def amenities(url):
-    services = []
-    try:
-        options = Options()
-        #options.add_argument("--headless")
-        options = Options()
-        options.add_argument("--headless")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--disable-features=NetworkService")
-        options.add_argument("--window-size=1920x1080")
-        options.add_argument("--disable-features=VizDisplayCompositor")
-
-
-
-        with webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options) as driver:
-            driver.get(url)
-
-            # Use WebDriverWait to wait for the button to be clickable
-            try:
-                button_xpath = '//*[@id="main-content"]/section[4]/div[2]/button'
-                WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, button_xpath))).click()
-            except Exception as e:
-                print(e)
-                st.write(e)
-
-            # BeautifulSoup parsing
-            soup = BeautifulSoup(driver.page_source, 'html.parser')
-            target_div = soup.find('div', class_='arrange__09f24__LDfbs gutter-2__09f24__CCmUo layout-wrap__09f24__GEBlv layout-2-units__09f24__PsGVW css-1qn0b6x')
-            if target_div:
-                spans = target_div.find_all('span')
-                st.write(spans)
-                services = [span.get_text().strip() for span in spans if span.get_text().strip()]
-
-    except Exception as e:
-        print(e)
-        st.write(e)
-
-    return services
-
-    return service
+# def amenities(url):
+#     services = []
+#     try:
+#         options = Options()
+#         #options.add_argument("--headless")
+#         options = Options()
+#         options.add_argument("--headless")
+#         options.add_argument("--no-sandbox")
+#         options.add_argument("--disable-dev-shm-usage")
+#         options.add_argument("--disable-gpu")
+#         options.add_argument("--disable-features=NetworkService")
+#         options.add_argument("--window-size=1920x1080")
+#         options.add_argument("--disable-features=VizDisplayCompositor")
+#
+#
+#
+#         with webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options) as driver:
+#             driver.get(url)
+#
+#             # Use WebDriverWait to wait for the button to be clickable
+#             try:
+#                 button_xpath = '//*[@id="main-content"]/section[4]/div[2]/button'
+#                 WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, button_xpath))).click()
+#             except Exception as e:
+#                 print(e)
+#                 st.write(e)
+#
+#             # BeautifulSoup parsing
+#             soup = BeautifulSoup(driver.page_source, 'html.parser')
+#             target_div = soup.find('div', class_='arrange__09f24__LDfbs gutter-2__09f24__CCmUo layout-wrap__09f24__GEBlv layout-2-units__09f24__PsGVW css-1qn0b6x')
+#             if target_div:
+#                 spans = target_div.find_all('span')
+#                 st.write(spans)
+#                 services = [span.get_text().strip() for span in spans if span.get_text().strip()]
+#
+#     except Exception as e:
+#         print(e)
+#         st.write(e)
+#
+#     return services
+#
+#     return service
 
 def rating_bars(response):
         #response = requests.get(url)
@@ -604,29 +596,29 @@ def create_profile(profile_select):
             formatted_hours = format_business_hours(business_hours[i])
             st.write(weekday[i] + formatted_hours)
 
-    with st.spinner('Loading, please wait!'):
-        services = amenities(url)
-
-    with st.expander("Amenities and More"):
-        st.write(services)
-        if len(services) > 0:
-            if 'Health Score' in services:
-                services = services[3:]
-
-            filtered_data = [item for item in services if item]
-
-            grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
-
-            # Format as HTML with inline CSS
-            html_content = '<div style="display: flex; flex-wrap: wrap;">'
-            for group in grouped_data:
-                html_content += format_group(group)
-            html_content += '</div>'
-
-            # Display in Streamlit using HTML
-            st.markdown(html_content, unsafe_allow_html=True)
-        else:
-            st.info("No data in database")
+    # with st.spinner('Loading, please wait!'):
+    #     services = amenities(url)
+    #
+    # with st.expander("Amenities and More"):
+    #     st.write(services)
+    #     if len(services) > 0:
+    #         if 'Health Score' in services:
+    #             services = services[3:]
+    #
+    #         filtered_data = [item for item in services if item]
+    #
+    #         grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
+    #
+    #         # Format as HTML with inline CSS
+    #         html_content = '<div style="display: flex; flex-wrap: wrap;">'
+    #         for group in grouped_data:
+    #             html_content += format_group(group)
+    #         html_content += '</div>'
+    #
+    #         # Display in Streamlit using HTML
+    #         st.markdown(html_content, unsafe_allow_html=True)
+    #     else:
+    #         st.info("No data in database")
 
 
 
