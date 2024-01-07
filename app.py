@@ -38,9 +38,10 @@ def restaurant_recommendation(name, data, indices,features):
     # Load the features
     features = features
 
-
-    # Get the index of the restaurant that matches the name
-    index = indices[name]
+    if indices[name].ndim > 0:
+        index = indices[name][0]
+    else:
+        index = indices[name]
 
     # Compute similarity scores with other features
     vector_2d = features[index].reshape(1, -1)
