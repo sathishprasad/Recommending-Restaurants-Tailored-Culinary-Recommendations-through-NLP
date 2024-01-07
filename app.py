@@ -181,7 +181,7 @@ def show_results():
             </style>
             """,
             unsafe_allow_html=True)
-        profile_select = col2.selectbox('',result['name'].unique().tolist(),index=None,help='Choose a restaurant to explore more about the restaurant such as location, reviews, ratings,etc.',placeholder="Choose a restuarant from above")
+        profile_select = col2.selectbox('',result['name'].unique().tolist(),index=None,help='Choose a restaurant to explore more about the restaurant such as location, reviews, ratings,etc.',placeholder="Choose a restaurant for more information")
         agree = col3.checkbox('Show more')
 
         if agree:
@@ -491,7 +491,7 @@ def create_profile(profile_select):
 
 
     t1,t2,t3 = st.columns(3)
-    t2.markdown('#### '+name)
+    t2.markdown('### '+name)
 
 
 
