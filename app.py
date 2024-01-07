@@ -375,9 +375,6 @@ def format_group(items):
 
 def main():
     img = Image.open('logo2.png')
-    st.set_page_config(page_title='TasteMatch - Discover Your Next Favorite Restaurant',
-                   layout = "wide",page_icon=img)
-    img = Image.open('logo2.png')
 
     st.title("TasteMatch: Discover Your Next Favorite Restaurant")
     #st.write("Discover new dining gems effortlessly with our app: just pick your favorite restaurant, and we'll match you with similar, top-rated spots near you. Expand your culinary world with confidence and ease!")
@@ -666,6 +663,9 @@ def create_profile(profile_select):
             st.info("No reviews available")
 
 def app():
+    img = Image.open('logo2.png')
+    st.set_page_config(page_title='TasteMatch - Discover Your Next Favorite Restaurant',
+                   layout = "wide",page_icon=img)
     hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
