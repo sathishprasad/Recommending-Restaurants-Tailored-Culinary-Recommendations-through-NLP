@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
-import pickle
 from PIL import Image
-from streamlit.components.v1 import html
 from streamlit_folium import st_folium
 import folium
 from bs4 import BeautifulSoup
@@ -20,8 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from dateutil import parser
 from sklearn.metrics.pairwise import cosine_similarity
-import threading
-from streamlit_chat import message
+
 
 st.cache_data()
 def connect():
@@ -669,6 +666,23 @@ def create_profile(profile_select):
             st.info("No reviews available")
 
 def app():
+    hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            footer:after {
+            content:'Developed by Sathish Prasad V T'; 
+            visibility: visible;
+            display: block;
+            position: relative;
+            #background-color: red;
+            padding: 5px;
+            top: 2px;
+            }
+            header {visibility: hidden;}
+            </style>
+            """
+    st.markdown(hide_st_style, unsafe_allow_html=True)
     main()
 
     if 'Submitted' in st.session_state:
