@@ -18,6 +18,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from dateutil import parser
 from sklearn.metrics.pairwise import cosine_similarity
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 st.cache_data()
@@ -326,7 +328,7 @@ def amenities(url):
 
 
 
-        with webdriver.Chrome(options=options) as driver:
+        with webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options) as driver:
             driver.get(url)
 
             # Use WebDriverWait to wait for the button to be clickable
