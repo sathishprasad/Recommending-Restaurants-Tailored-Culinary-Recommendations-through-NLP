@@ -211,6 +211,7 @@ def scrape_restaurant_info(url):
     recommendation_data ={}
     website_links =[]
 
+
     response = requests.get(url)
 
     span_texts = customer_reviews(response)
@@ -258,8 +259,10 @@ def scrape_restaurant_info(url):
                 dish_urls.append(dish_url)
         recommendation_data['dish_images'] = dish_urls
 
-        elements = soup.find_all(class_='css-174a15u')
-        amenities = [element.get_text() for element in elements]
+
+        divs = soup.find_all('div', class_='arrange-unit__09f24__rqHTg arrange-unit-fill__09f24__CUubG css-1qn0b6x')
+        amenities = [span.get_text() for div in divs for span in div.find_all('span')]
+
 
         #span_texts = customer_reviews(url)
         #progress_ratings = rating_bars(url)
@@ -270,7 +273,7 @@ def scrape_restaurant_info(url):
         recommendation_data['reviews'] = ''
         recommendation_data['popular_dishes'] = ''
         recommendation_data['dish_images'] = []
-        amenities = ''
+        amenities = []
         website_links = []
         span_texts = ''
         progress_ratings = ''
@@ -471,9 +474,16 @@ def create_profile(profile_select):
     name = data['name'][0]
     url = data['url'][0]
     review_count = data['review_count'][0]
-    categories = data['categories'][0]
+
+    if pd.isna(data['categories'][0]):
+        phone = "Information not available"
+    else:
+        categories = data['categories'][0]
     rating = data['rating'][0]
-    phone = data['display_phone'][0]
+    if pd.isna(data['display_phone'][0]):
+        phone = "Information not available"
+    else:
+        phone = data['display_phone'][0]
     City = data['City'][0]
     State = data['State'][0]
     latitude = float(data['latitude'][0])
@@ -523,18 +533,21 @@ def create_profile(profile_select):
         """,
         unsafe_allow_html=True)
 
-    if 'Score' not in healthscore:
-        x = 'Health Score: N/A'
+
+    if 'Health Score' in healthscore:
+        index = healthscore.index('Health Score')
+        x = healthscore[index] +': ' +healthscore[index+1]
     else:
-        x = healthscore[3].split('Powered')
-        x = x[0].replace("Score", "Score: ")
+        x = 'Health Score: Information not available'
+
     url = data['url'][0]
     c2.markdown('##### General Information')
+    c2.write('')
     c2.write('**Cuisine: '+ categories+'**')
     c2.write('**'+x+'**') #healthscore
     c2.write('**Avg Customer Rating: '+ str(rating)+'**')
     c2.write('**Total Reviews: '+ str(review_count)+'**')
-    c2.write('**Phone Number: '+ phone+'**')
+    c2.write('**Phone Number: '+ str(phone)+'**')
     c2.write('**Place: '+ City + ', '+ State+'**')
     c2.write('**Address: '+ address+'**')
     c2.write('')
@@ -580,11 +593,15 @@ def create_profile(profile_select):
         unsafe_allow_html=True)
 
     c3.markdown('##### All Ratings')
-    c3.progress(int(progress_ratings[0]), text='5 Star Ratings')
-    c3.progress(int(progress_ratings[1]), text='4 Star Ratings')
-    c3.progress(int(progress_ratings[2]), text='3 Star Ratings')
-    c3.progress(int(progress_ratings[3]), text='2 Star Ratings')
-    c3.progress(int(progress_ratings[4]), text='1 Star Ratings')
+    try:
+        c3.write('')
+        c3.progress(int(progress_ratings[0]), text='5 Star Ratings')
+        c3.progress(int(progress_ratings[1]), text='4 Star Ratings')
+        c3.progress(int(progress_ratings[2]), text='3 Star Ratings')
+        c3.progress(int(progress_ratings[3]), text='2 Star Ratings')
+        c3.progress(int(progress_ratings[4]), text='1 Star Ratings')
+    except:
+        st.info("No Information Available")
 
 
     with st.expander("Open Hours"):
@@ -599,26 +616,42 @@ def create_profile(profile_select):
     # with st.spinner('Loading, please wait!'):
     #     services = amenities(url)
     #
-    # with st.expander("Amenities and More"):
-    #     st.write(services)
-    #     if len(services) > 0:
-    #         if 'Health Score' in services:
-    #             services = services[3:]
-    #
-    #         filtered_data = [item for item in services if item]
-    #
-    #         grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
-    #
-    #         # Format as HTML with inline CSS
-    #         html_content = '<div style="display: flex; flex-wrap: wrap;">'
-    #         for group in grouped_data:
-    #             html_content += format_group(group)
-    #         html_content += '</div>'
-    #
-    #         # Display in Streamlit using HTML
-    #         st.markdown(html_content, unsafe_allow_html=True)
-    #     else:
-    #         st.info("No data in database")
+    with st.expander("Additional Information"):
+        try:
+            if 'Takes Reservations' in healthscore:
+                index = healthscore.index('Takes Reservations')
+
+                filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
+
+                grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
+
+                # Format as HTML with inline CSS
+                html_content = '<div style="display: flex; flex-wrap: wrap;">'
+                for group in grouped_data:
+                    html_content += format_group(group)
+                html_content += '</div>'
+
+                # Display in Streamlit using HTML
+                st.markdown(html_content, unsafe_allow_html=True)
+            elif 'Offers Delivery' in healthscore:
+                index = healthscore.index('Offers Delivery')
+
+                filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
+
+                grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
+
+                # Format as HTML with inline CSS
+                html_content = '<div style="display: flex; flex-wrap: wrap;">'
+                for group in grouped_data:
+                    html_content += format_group(group)
+                html_content += '</div>'
+
+                # Display in Streamlit using HTML
+                st.markdown(html_content, unsafe_allow_html=True)
+            else:
+                st.info("No Additional Information provided")
+        except:
+            st.info("No Additional Information provided")
 
 
 
