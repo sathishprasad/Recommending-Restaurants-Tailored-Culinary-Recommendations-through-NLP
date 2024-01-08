@@ -139,59 +139,6 @@ def split_and_clean_food_ideas(text):
 
     return cleaned_food_items
 
-def show_results():
-    result = st.session_state['result']
-    if len(result) < 1:
-        st.info("Unfortunately, we couldn't find restaurants closely matching your preference this time. We apologize for the inconvenience. Please try selecting another restaurant for more tailored recommendations")
-    else:
-        result = result.drop(result.index[0])
-        show_results = result[['name','Recommended','categories','rating','City','State','address','image_url']]
-
-        new_column_names = {
-                                'name': 'Restaurant Name',
-                                'Recommended': 'Recommended,%',
-                                'categories': 'Cuisine',
-                                'rating': 'Avg Rating',
-                                'City': 'City',
-                                'State': 'State',
-                                'address': 'Address',
-                                'image_url': 'image_url'
-                            }
-
-        #st.dataframe(show_results)
-
-        show_results.rename(columns=new_column_names, inplace=True)
-
-        show_results = show_results[['image_url','Restaurant Name','Recommended,%','Cuisine','Avg Rating','City','State','Address']]
-        st.data_editor(
-                                show_results,
-                                column_config={
-                                "image_url": st.column_config.ImageColumn(
-                                "", help="Streamlit app preview screenshots")
-                                },
-                                hide_index=True,
-                                )
-        #st.dataframe(show_results)
-
-        col1,col2,col3,col4 = st.columns([1.5,3,2,1])
-        st.markdown(
-            """
-            <style>
-            [data-baseweb="checkbox"] {
-                margin-top: +35px;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True)
-        profile_select = col2.selectbox('',result['name'].unique().tolist(),index=None,help='Choose a restaurant to explore more about the restaurant such as location, reviews, ratings,etc.',placeholder="Choose a restaurant for more information")
-        agree = col3.checkbox('Show more')
-
-        if agree:
-            if profile_select is None:
-              st.error("Please choose a restaurant first")
-            else:
-              create_profile(profile_select)
-
 def customer_reviews(response):
   #response = requests.get(url)
   soup = BeautifulSoup(response.text, 'html.parser')
@@ -464,7 +411,54 @@ def main():
         st.session_state['Submitted'] = True
         st.session_state['result'] = result
         st.experimental_rerun()
+def show_results():
+    result = st.session_state['result']
+    if len(result) < 1:
+        st.info("Unfortunately, we couldn't find restaurants closely matching your preference this time. We apologize for the inconvenience. Please try selecting another restaurant for more tailored recommendations")
+    else:
+        result = result.drop(result.index[0])
+        show_results = result[['name','Recommended','categories','rating','City','State','address','image_url']]
 
+        new_column_names = {
+                                'name': 'Restaurant Name',
+                                'Recommended': 'Recommended,%',
+                                'categories': 'Cuisine',
+                                'rating': 'Avg Rating',
+                                'City': 'City',
+                                'State': 'State',
+                                'address': 'Address',
+                                'image_url': 'image_url'
+                            }
+
+        #st.dataframe(show_results)
+
+        show_results.rename(columns=new_column_names, inplace=True)
+
+        show_results = show_results[['image_url','Restaurant Name','Recommended,%','Cuisine','Avg Rating','City','State','Address']]
+        st.data_editor(
+                                show_results,
+                                column_config={
+                                "image_url": st.column_config.ImageColumn(
+                                "", help="Streamlit app preview screenshots")
+                                },
+                                hide_index=True,
+                                )
+        #st.dataframe(show_results)
+
+        col1,col2,col3 = st.columns([2,5,2])
+        st.markdown(
+            """
+            <style>
+            [data-baseweb="checkbox"] {
+                margin-top: +35px;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True)
+        profile_select = col2.selectbox('',result['name'].unique().tolist(),index=None,help='Choose a restaurant to explore more about the restaurant such as location, reviews, ratings,etc.',placeholder="Select a restaurant for more information")
+
+        if profile_select is not None:
+              create_profile(profile_select)
 def create_profile(profile_select):
     result = st.session_state['result']
 
