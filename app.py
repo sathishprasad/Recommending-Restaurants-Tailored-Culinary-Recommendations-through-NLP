@@ -9,8 +9,8 @@ from streamlit_image_select import image_select
 import re
 import numpy as np
 import urllib.parse
-from dateutil import parser
 from sklearn.metrics.pairwise import cosine_similarity
+from datetime import datetime
 
 
 
@@ -235,69 +235,26 @@ def find_dates_and_reviews(data_list):
     dates_and_reviews = {}
     last_date = None
 
+    date_pattern = re.compile(r'(\bJan\b|\bFeb\b|\bMar\b|\bApr\b|\bMay\b|\bJun\b|\bJul\b|\bAug\b|\bSep\b|\bOct\b|\bNov\b|\bDec\b) \d{1,2}, \d{4}')
+
+    skip_keywords = ["photo","photos", "review", "updated review", "previous review",'Read more','See question details','Funny']  # Add more keywords as needed
+
     for item in data_list:
         item = item.strip()
-        if not item:
-            continue  # Skip empty strings
+        if not item or any(keyword in item.lower() for keyword in skip_keywords):
+            continue  # Skip empty strings and strings with specific keywords
 
-        # Check if the item is a date
-        try:
-            parsed_date = parser.parse(item, fuzzy=False)
-            # If we haven't already found a review for a previous date, store this date
-            if last_date is None:
-                last_date = parsed_date.strftime("%b %d, %Y")
-        except ValueError:
+        # Check if the item is a date using regex
+        date_match = date_pattern.search(item)
+        if date_match:
+            last_date = date_match.group()
+        else:
             # If it's not a date and we have a recent date
-            if last_date:
-                # Check if the item's length is more than 10
-                if len(item) > 17:
-                    dates_and_reviews[last_date] = item
-                    last_date = None  # Reset last_date after assigning a review
+            if last_date and len(item) > 15:  # Assuming review length should be more than 15 characters
+                dates_and_reviews[last_date] = item
+                last_date = None  # Reset last_date after assigning a review
 
     return dates_and_reviews
-
-# def amenities(url):
-#     services = []
-#     try:
-#         options = Options()
-#         #options.add_argument("--headless")
-#         options = Options()
-#         options.add_argument("--headless")
-#         options.add_argument("--no-sandbox")
-#         options.add_argument("--disable-dev-shm-usage")
-#         options.add_argument("--disable-gpu")
-#         options.add_argument("--disable-features=NetworkService")
-#         options.add_argument("--window-size=1920x1080")
-#         options.add_argument("--disable-features=VizDisplayCompositor")
-#
-#
-#
-#         with webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options) as driver:
-#             driver.get(url)
-#
-#             # Use WebDriverWait to wait for the button to be clickable
-#             try:
-#                 button_xpath = '//*[@id="main-content"]/section[4]/div[2]/button'
-#                 WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, button_xpath))).click()
-#             except Exception as e:
-#                 print(e)
-#                 st.write(e)
-#
-#             # BeautifulSoup parsing
-#             soup = BeautifulSoup(driver.page_source, 'html.parser')
-#             target_div = soup.find('div', class_='arrange__09f24__LDfbs gutter-2__09f24__CCmUo layout-wrap__09f24__GEBlv layout-2-units__09f24__PsGVW css-1qn0b6x')
-#             if target_div:
-#                 spans = target_div.find_all('span')
-#                 st.write(spans)
-#                 services = [span.get_text().strip() for span in spans if span.get_text().strip()]
-#
-#     except Exception as e:
-#         print(e)
-#         st.write(e)
-#
-#     return services
-#
-#     return service
 
 def rating_bars(response):
         #response = requests.get(url)
@@ -411,6 +368,7 @@ def main():
         st.session_state['Submitted'] = True
         st.session_state['result'] = result
         st.experimental_rerun()
+
 def show_results():
     result = st.session_state['result']
     if len(result) < 1:
@@ -459,6 +417,7 @@ def show_results():
 
         if profile_select is not None:
               create_profile(profile_select)
+
 def create_profile(profile_select):
     result = st.session_state['result']
 
@@ -729,6 +688,6 @@ def app():
 
 app()
 
-#stars
+
 
 
