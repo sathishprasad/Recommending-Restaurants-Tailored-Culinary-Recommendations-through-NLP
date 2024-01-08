@@ -14,7 +14,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 
-st.cache_data
+st.cache_data()
 def connect():
     df = pd.read_csv("app_demo_data_full.csv")
     features = np.load('word2vec_vectors.npy')
