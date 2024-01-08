@@ -599,19 +599,17 @@ def create_profile(profile_select):
     except:
         st.info("No Information Available")
 
-
-    with st.expander("Open Hours"):
-        weekday = ['Monday: ','Tuesday: ','Wednesday: ','Thursday: ','Friday: ','Saturday: ','Sunday: ']
-        loop = len(business_hours)
-        if len(business_hours)>7:
-            loop = 7
-        for i in range(0,loop):
-            formatted_hours = format_business_hours(business_hours[i])
-            st.write(weekday[i] + formatted_hours)
-
     with st.spinner('Whipping up something delicious, just a moment!'):
-    #     services = amenities(url)
-    #
+        with st.expander("Open Hours"):
+            weekday = ['Monday: ','Tuesday: ','Wednesday: ','Thursday: ','Friday: ','Saturday: ','Sunday: ']
+            loop = len(business_hours)
+            if len(business_hours)>7:
+                loop = 7
+            for i in range(0,loop):
+                formatted_hours = format_business_hours(business_hours[i])
+                st.write(weekday[i] + formatted_hours)
+
+
         with st.expander("Additional Information"):
             try:
                 if 'Health Score' in healthscore:
