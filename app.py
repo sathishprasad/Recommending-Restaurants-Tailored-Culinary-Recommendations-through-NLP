@@ -14,10 +14,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 
-st.cache_data()
+st.cache_data
 def connect():
     df = pd.read_csv("app_demo_data_full.csv")
     features = np.load('word2vec_vectors.npy')
+    df['image_url'] = df['image_url'].fillna("https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/832px-No-Image-Placeholder.svg.png")
+
 
 
     return df,features
@@ -618,7 +620,22 @@ def create_profile(profile_select):
     #
         with st.expander("Additional Information"):
             try:
-                if 'Takes Reservations' in healthscore:
+                if 'Health Score' in healthscore:
+                    index = healthscore.index('Health Score')
+
+                    filtered_data = [healthscore[index+2],healthscore[index+3],healthscore[index+4]]
+
+                    grouped_data = [filtered_data[i:i+3] for i in range(0, len(filtered_data), 3)]
+
+                    # Format as HTML with inline CSS
+                    html_content = '<div style="display: flex; flex-wrap: wrap;">'
+                    for group in grouped_data:
+                        html_content += format_group(group)
+                    html_content += '</div>'
+
+                    # Display in Streamlit using HTML
+                    st.markdown(html_content, unsafe_allow_html=True)
+                elif 'Takes Reservations' in healthscore:
                     index = healthscore.index('Takes Reservations')
 
                     filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
