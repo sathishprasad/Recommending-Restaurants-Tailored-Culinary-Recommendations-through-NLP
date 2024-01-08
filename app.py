@@ -613,84 +613,84 @@ def create_profile(profile_select):
             formatted_hours = format_business_hours(business_hours[i])
             st.write(weekday[i] + formatted_hours)
 
-    # with st.spinner('Loading, please wait!'):
+    with st.spinner('Whipping up something delicious, just a moment!'):
     #     services = amenities(url)
     #
-    with st.expander("Additional Information"):
-        try:
-            if 'Takes Reservations' in healthscore:
-                index = healthscore.index('Takes Reservations')
+        with st.expander("Additional Information"):
+            try:
+                if 'Takes Reservations' in healthscore:
+                    index = healthscore.index('Takes Reservations')
 
-                filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
+                    filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
 
-                grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
+                    grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
 
-                # Format as HTML with inline CSS
-                html_content = '<div style="display: flex; flex-wrap: wrap;">'
-                for group in grouped_data:
-                    html_content += format_group(group)
-                html_content += '</div>'
+                    # Format as HTML with inline CSS
+                    html_content = '<div style="display: flex; flex-wrap: wrap;">'
+                    for group in grouped_data:
+                        html_content += format_group(group)
+                    html_content += '</div>'
 
-                # Display in Streamlit using HTML
-                st.markdown(html_content, unsafe_allow_html=True)
-            elif 'Offers Delivery' in healthscore:
-                index = healthscore.index('Offers Delivery')
+                    # Display in Streamlit using HTML
+                    st.markdown(html_content, unsafe_allow_html=True)
+                elif 'Offers Delivery' in healthscore:
+                    index = healthscore.index('Offers Delivery')
 
-                filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
+                    filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
 
-                grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
+                    grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
 
-                # Format as HTML with inline CSS
-                html_content = '<div style="display: flex; flex-wrap: wrap;">'
-                for group in grouped_data:
-                    html_content += format_group(group)
-                html_content += '</div>'
+                    # Format as HTML with inline CSS
+                    html_content = '<div style="display: flex; flex-wrap: wrap;">'
+                    for group in grouped_data:
+                        html_content += format_group(group)
+                    html_content += '</div>'
 
-                # Display in Streamlit using HTML
-                st.markdown(html_content, unsafe_allow_html=True)
-            else:
+                    # Display in Streamlit using HTML
+                    st.markdown(html_content, unsafe_allow_html=True)
+                else:
+                    st.info("No Additional Information provided")
+            except:
                 st.info("No Additional Information provided")
-        except:
-            st.info("No Additional Information provided")
 
 
 
-    tab1, tab2, tab3 = st.tabs(["Popular dishes", "FAQ", "Reviews"])
+        tab1, tab2, tab3 = st.tabs(["Popular dishes", "FAQ", "Reviews"])
 
 
 
-    with tab1:
-        try:
-            items = split_and_clean_food_ideas(recommendations['popular_dishes'])
-            if len(recommendations['dish_images']) > 1:
-                x = len(items)
-                img = image_select(
-                    label="",
-                    images= recommendations['dish_images'][:x],
-                    captions=items[:x],use_container_width=False )
-            else:
+        with tab1:
+            try:
+                items = split_and_clean_food_ideas(recommendations['popular_dishes'])
+                if len(recommendations['dish_images']) > 1:
+                    x = len(items)
+                    img = image_select(
+                        label="",
+                        images= recommendations['dish_images'][:x],
+                        captions=items[:x],use_container_width=False )
+                else:
+                    st.info('No data available')
+            except:
                 st.info('No data available')
-        except:
-            st.info('No data available')
 
-    with tab2:
-        if len(cleaned_review['faqs']) > 0:
-            faq_list = clean_and_split_faq(cleaned_review['faqs'][0])
-            for i in range(0,len(faq_list)):
-                st.markdown("**Q: "+ faq_list[i]['question']+"**")
-                st.write("**A:** "+ faq_list[i]['answer'].replace("$","\$"))
-                st.divider()
-        else:
-           st.info("No questions asked yet!")
-    with tab3:
-        if len(customer_reviews) > 0:
-            dp = Image.open('dp.png')
-            for date, review in customer_reviews.items():
-                st.image(dp,width=50)
-                st.markdown(f"**Reviewed On: {date}**<br>{review}", unsafe_allow_html=True)
-                st.divider()
-        else:
-            st.info("No reviews available")
+        with tab2:
+            if len(cleaned_review['faqs']) > 0:
+                faq_list = clean_and_split_faq(cleaned_review['faqs'][0])
+                for i in range(0,len(faq_list)):
+                    st.markdown("**Q: "+ faq_list[i]['question']+"**")
+                    st.write("**A:** "+ faq_list[i]['answer'].replace("$","\$"))
+                    st.divider()
+            else:
+               st.info("No questions asked yet!")
+        with tab3:
+            if len(customer_reviews) > 0:
+                dp = Image.open('dp.png')
+                for date, review in customer_reviews.items():
+                    st.image(dp,width=50)
+                    st.markdown(f"**Reviewed On: {date}**<br>{review}", unsafe_allow_html=True)
+                    st.divider()
+            else:
+                st.info("No reviews available")
 
 def app():
     img = Image.open('logo2.png')
