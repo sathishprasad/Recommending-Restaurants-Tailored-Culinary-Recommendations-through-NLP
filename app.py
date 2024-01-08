@@ -419,246 +419,247 @@ def show_results():
               create_profile(profile_select)
 
 def create_profile(profile_select):
-    result = st.session_state['result']
+    with st.spinner('Whipping up something delicious, just a moment!'):
+        result = st.session_state['result']
 
 
-    data = result[result['name']==profile_select]
+        data = result[result['name']==profile_select]
 
-    data.reset_index(drop=True,inplace=True)
+        data.reset_index(drop=True,inplace=True)
 
-    name = data['name'][0]
-    url = data['url'][0]
-    review_count = data['review_count'][0]
+        name = data['name'][0]
+        url = data['url'][0]
+        review_count = data['review_count'][0]
 
-    if pd.isna(data['categories'][0]):
-        phone = "Information not available"
-    else:
-        categories = data['categories'][0]
-    rating = data['rating'][0]
-    if pd.isna(data['display_phone'][0]):
-        phone = "Information not available"
-    else:
-        phone = data['display_phone'][0]
-    City = data['City'][0]
-    State = data['State'][0]
-    latitude = float(data['latitude'][0])
-    longitude = float(data['longitude'][0])
-    address = data['address'][0]
-    similarity = data['Recommended'][0]
-    info,review,recommendations,healthscore,website_link,span_texts,progress_ratings = scrape_restaurant_info(url)
-
-
-    customer_reviews = find_dates_and_reviews(span_texts)
+        if pd.isna(data['categories'][0]):
+            phone = "Information not available"
+        else:
+            categories = data['categories'][0]
+        rating = data['rating'][0]
+        if pd.isna(data['display_phone'][0]):
+            phone = "Information not available"
+        else:
+            phone = data['display_phone'][0]
+        City = data['City'][0]
+        State = data['State'][0]
+        latitude = float(data['latitude'][0])
+        longitude = float(data['longitude'][0])
+        address = data['address'][0]
+        similarity = data['Recommended'][0]
+        info,review,recommendations,healthscore,website_link,span_texts,progress_ratings = scrape_restaurant_info(url)
 
 
-    cleaned_review = clean_and_split_review(review)
-    business_hours = cleaned_review['business_hours']
+        customer_reviews = find_dates_and_reviews(span_texts)
 
 
-    t1,t2,t3 = st.columns(3)
-    t2.markdown('### '+name)
+        cleaned_review = clean_and_split_review(review)
+        business_hours = cleaned_review['business_hours']
+
+
+        t1,t2,t3 = st.columns(3)
+        t2.markdown('### '+name)
 
 
 
-    #img2 = Image.open('noimage.jpeg')
+        #img2 = Image.open('noimage.jpeg')
 
-    c1,c2,c3 = st.columns([2.5,2.5,2])
-    #c1.image(img2)
-    c1.markdown('##### Location')
-    with c1.container():
-        m = folium.Map(location=[latitude, longitude], zoom_start=18,dragging=False,zoom_control=False,
-               scrollWheelZoom=False)
-        folium.Marker(
-            [latitude, longitude], popup=name, tooltip=name
-        ).add_to(m)
-        st_folium(m, width=400, height=300)
+        c1,c2,c3 = st.columns([2.5,2.5,2])
+        #c1.image(img2)
+        c1.markdown('##### Location')
+        with c1.container():
+            m = folium.Map(location=[latitude, longitude], zoom_start=18,dragging=False,zoom_control=False,
+                   scrollWheelZoom=False)
+            folium.Marker(
+                [latitude, longitude], popup=name, tooltip=name
+            ).add_to(m)
+            st_folium(m, width=400, height=300)
 
-        route = f"http://maps.google.com/maps?z=12&t=m&q=loc:{latitude}+{longitude}"
+            route = f"http://maps.google.com/maps?z=12&t=m&q=loc:{latitude}+{longitude}"
 
-        st.link_button('Get Directions',route)
+            st.link_button('Get Directions',route)
 
-    st.markdown(
-        """
-        <style>
-        [data-testid="baseLinkButton-secondary"] {
-            margin-left: 100px;
-            margin-top: -40px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True)
-
-
-    if 'Health Score' in healthscore:
-        index = healthscore.index('Health Score')
-        x = healthscore[index] +': ' +healthscore[index+1]
-    else:
-        x = 'Health Score: Information not available'
-
-    url = data['url'][0]
-    c2.markdown('##### General Information')
-    c2.write('')
-    c2.write('**Cuisine: '+ categories+'**')
-    c2.write('**'+x+'**') #healthscore
-    c2.write('**Avg Customer Rating: '+ str(rating)+'**')
-    c2.write('**Total Reviews: '+ str(review_count)+'**')
-    c2.write('**Phone Number: '+ str(phone)+'**')
-    c2.write('**Place: '+ City + ', '+ State+'**')
-    c2.write('**Address: '+ address+'**')
-    c2.write('')
+        st.markdown(
+            """
+            <style>
+            [data-testid="baseLinkButton-secondary"] {
+                margin-left: 100px;
+                margin-top: -40px;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True)
 
 
-    if len(website_link) > 0:
-        if len(website_link)>1:
-            if name[:5] not in website_link[0]:
-                link = str(website_link[1])
+        if 'Health Score' in healthscore:
+            index = healthscore.index('Health Score')
+            x = healthscore[index] +': ' +healthscore[index+1]
+        else:
+            x = 'Health Score: Information not available'
+
+        url = data['url'][0]
+        c2.markdown('##### General Information')
+        c2.write('')
+        c2.write('**Cuisine: '+ categories+'**')
+        c2.write('**'+x+'**') #healthscore
+        c2.write('**Avg Customer Rating: '+ str(rating)+'**')
+        c2.write('**Total Reviews: '+ str(review_count)+'**')
+        c2.write('**Phone Number: '+ str(phone)+'**')
+        c2.write('**Place: '+ City + ', '+ State+'**')
+        c2.write('**Address: '+ address+'**')
+        c2.write('')
+
+
+        if len(website_link) > 0:
+            if len(website_link)>1:
+                if name[:5] not in website_link[0]:
+                    link = str(website_link[1])
+                else:
+                    link = str(website_link[0])
             else:
                 link = str(website_link[0])
+            if 'www' in link and 'https://' not in link:
+                link = 'https://'+link
+            elif 'https://' not in link and 'www.' not in link:
+                link = 'https://www.'+link
+            c2.link_button('View Website',link)
         else:
-            link = str(website_link[0])
-        if 'www' in link and 'https://' not in link:
-            link = 'https://'+link
-        elif 'https://' not in link and 'www.' not in link:
-            link = 'https://www.'+link
-        c2.link_button('View Website',link)
-    else:
-        c2.link_button('View Website',url)
+            c2.link_button('View Website',url)
 
-    st.markdown(
-    """
-    <style>
-        .stProgress > div > div{
-            height: 65% 
-        }
-        .stProgress > div > div > div > div {
-            background-image: linear-gradient(to left, #f73d91 , #e3cad5);
-        }
-    </style>""",
-
-    unsafe_allow_html=True)
-
-    st.markdown(
-    """
+        st.markdown(
+        """
         <style>
-        [data-baseweb="progress-bar"] {
-            height: 20px;
-        }
-        </style>
-        """,
+            .stProgress > div > div{
+                height: 65% 
+            }
+            .stProgress > div > div > div > div {
+                background-image: linear-gradient(to left, #f73d91 , #e3cad5);
+            }
+        </style>""",
+
         unsafe_allow_html=True)
 
-    c3.markdown('##### All Ratings')
-    try:
-        c3.write('')
-        c3.progress(int(progress_ratings[0]), text='5 Star Ratings')
-        c3.progress(int(progress_ratings[1]), text='4 Star Ratings')
-        c3.progress(int(progress_ratings[2]), text='3 Star Ratings')
-        c3.progress(int(progress_ratings[3]), text='2 Star Ratings')
-        c3.progress(int(progress_ratings[4]), text='1 Star Ratings')
-    except:
-        st.info("No Information Available")
+        st.markdown(
+        """
+            <style>
+            [data-baseweb="progress-bar"] {
+                height: 20px;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True)
 
-    with st.spinner('Whipping up something delicious, just a moment!'):
-        with st.expander("Open Hours"):
-            weekday = ['Monday: ','Tuesday: ','Wednesday: ','Thursday: ','Friday: ','Saturday: ','Sunday: ']
-            loop = len(business_hours)
-            if len(business_hours)>7:
-                loop = 7
-            for i in range(0,loop):
-                formatted_hours = format_business_hours(business_hours[i])
-                st.write(weekday[i] + formatted_hours)
+        c3.markdown('##### All Ratings')
+        try:
+            c3.write('')
+            c3.progress(int(progress_ratings[0]), text='5 Star Ratings')
+            c3.progress(int(progress_ratings[1]), text='4 Star Ratings')
+            c3.progress(int(progress_ratings[2]), text='3 Star Ratings')
+            c3.progress(int(progress_ratings[3]), text='2 Star Ratings')
+            c3.progress(int(progress_ratings[4]), text='1 Star Ratings')
+        except:
+            st.info("No Information Available")
+
+        with st.spinner('Whipping up something delicious, just a moment!'):
+            with st.expander("Open Hours"):
+                weekday = ['Monday: ','Tuesday: ','Wednesday: ','Thursday: ','Friday: ','Saturday: ','Sunday: ']
+                loop = len(business_hours)
+                if len(business_hours)>7:
+                    loop = 7
+                for i in range(0,loop):
+                    formatted_hours = format_business_hours(business_hours[i])
+                    st.write(weekday[i] + formatted_hours)
 
 
-        with st.expander("Additional Information"):
-            try:
-                if 'Health Score' in healthscore:
-                    index = healthscore.index('Health Score')
+            with st.expander("Additional Information"):
+                try:
+                    if 'Health Score' in healthscore:
+                        index = healthscore.index('Health Score')
 
-                    filtered_data = [healthscore[index+2],healthscore[index+3],healthscore[index+4]]
+                        filtered_data = [healthscore[index+2],healthscore[index+3],healthscore[index+4]]
 
-                    grouped_data = [filtered_data[i:i+3] for i in range(0, len(filtered_data), 3)]
+                        grouped_data = [filtered_data[i:i+3] for i in range(0, len(filtered_data), 3)]
 
-                    # Format as HTML with inline CSS
-                    html_content = '<div style="display: flex; flex-wrap: wrap;">'
-                    for group in grouped_data:
-                        html_content += format_group(group)
-                    html_content += '</div>'
+                        # Format as HTML with inline CSS
+                        html_content = '<div style="display: flex; flex-wrap: wrap;">'
+                        for group in grouped_data:
+                            html_content += format_group(group)
+                        html_content += '</div>'
 
-                    # Display in Streamlit using HTML
-                    st.markdown(html_content, unsafe_allow_html=True)
-                elif 'Takes Reservations' in healthscore:
-                    index = healthscore.index('Takes Reservations')
+                        # Display in Streamlit using HTML
+                        st.markdown(html_content, unsafe_allow_html=True)
+                    elif 'Takes Reservations' in healthscore:
+                        index = healthscore.index('Takes Reservations')
 
-                    filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
+                        filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
 
-                    grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
+                        grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
 
-                    # Format as HTML with inline CSS
-                    html_content = '<div style="display: flex; flex-wrap: wrap;">'
-                    for group in grouped_data:
-                        html_content += format_group(group)
-                    html_content += '</div>'
+                        # Format as HTML with inline CSS
+                        html_content = '<div style="display: flex; flex-wrap: wrap;">'
+                        for group in grouped_data:
+                            html_content += format_group(group)
+                        html_content += '</div>'
 
-                    # Display in Streamlit using HTML
-                    st.markdown(html_content, unsafe_allow_html=True)
-                elif 'Offers Delivery' in healthscore:
-                    index = healthscore.index('Offers Delivery')
+                        # Display in Streamlit using HTML
+                        st.markdown(html_content, unsafe_allow_html=True)
+                    elif 'Offers Delivery' in healthscore:
+                        index = healthscore.index('Offers Delivery')
 
-                    filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
+                        filtered_data = [healthscore[index],healthscore[index+1],healthscore[index+2],healthscore[index+3]]
 
-                    grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
+                        grouped_data = [filtered_data[i:i+4] for i in range(0, len(filtered_data), 4)]
 
-                    # Format as HTML with inline CSS
-                    html_content = '<div style="display: flex; flex-wrap: wrap;">'
-                    for group in grouped_data:
-                        html_content += format_group(group)
-                    html_content += '</div>'
+                        # Format as HTML with inline CSS
+                        html_content = '<div style="display: flex; flex-wrap: wrap;">'
+                        for group in grouped_data:
+                            html_content += format_group(group)
+                        html_content += '</div>'
 
-                    # Display in Streamlit using HTML
-                    st.markdown(html_content, unsafe_allow_html=True)
-                else:
+                        # Display in Streamlit using HTML
+                        st.markdown(html_content, unsafe_allow_html=True)
+                    else:
+                        st.info("No Additional Information provided")
+                except:
                     st.info("No Additional Information provided")
-            except:
-                st.info("No Additional Information provided")
 
 
 
-        tab1, tab2, tab3 = st.tabs(["Popular dishes", "FAQ", "Reviews"])
+            tab1, tab2, tab3 = st.tabs(["Popular dishes", "FAQ", "Reviews"])
 
 
 
-        with tab1:
-            try:
-                items = split_and_clean_food_ideas(recommendations['popular_dishes'])
-                if len(recommendations['dish_images']) > 1:
-                    x = len(items)
-                    img = image_select(
-                        label="",
-                        images= recommendations['dish_images'][:x],
-                        captions=items[:x],use_container_width=False )
-                else:
+            with tab1:
+                try:
+                    items = split_and_clean_food_ideas(recommendations['popular_dishes'])
+                    if len(recommendations['dish_images']) > 1:
+                        x = len(items)
+                        img = image_select(
+                            label="",
+                            images= recommendations['dish_images'][:x],
+                            captions=items[:x],use_container_width=False )
+                    else:
+                        st.info('No data available')
+                except:
                     st.info('No data available')
-            except:
-                st.info('No data available')
 
-        with tab2:
-            if len(cleaned_review['faqs']) > 0:
-                faq_list = clean_and_split_faq(cleaned_review['faqs'][0])
-                for i in range(0,len(faq_list)):
-                    st.markdown("**Q: "+ faq_list[i]['question']+"**")
-                    st.write("**A:** "+ faq_list[i]['answer'].replace("$","\$"))
-                    st.divider()
-            else:
-               st.info("No questions asked yet!")
-        with tab3:
-            if len(customer_reviews) > 0:
-                dp = Image.open('dp.png')
-                for date, review in customer_reviews.items():
-                    st.image(dp,width=50)
-                    st.markdown(f"**Reviewed On: {date}**<br>{review}", unsafe_allow_html=True)
-                    st.divider()
-            else:
-                st.info("No reviews available")
+            with tab2:
+                if len(cleaned_review['faqs']) > 0:
+                    faq_list = clean_and_split_faq(cleaned_review['faqs'][0])
+                    for i in range(0,len(faq_list)):
+                        st.markdown("**Q: "+ faq_list[i]['question']+"**")
+                        st.write("**A:** "+ faq_list[i]['answer'].replace("$","\$"))
+                        st.divider()
+                else:
+                   st.info("No questions asked yet!")
+            with tab3:
+                if len(customer_reviews) > 0:
+                    dp = Image.open('dp.png')
+                    for date, review in customer_reviews.items():
+                        st.image(dp,width=50)
+                        st.markdown(f"**Reviewed On: {date}**<br>{review}", unsafe_allow_html=True)
+                        st.divider()
+                else:
+                    st.info("No reviews available")
 
 def app():
     img = Image.open('logo2.png')
