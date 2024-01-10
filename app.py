@@ -17,7 +17,7 @@ from datetime import datetime
 st.cache_data()
 def connect():
     df = pd.read_csv("app_demo_data_full.csv")
-    features = np.load('word2vec_vectors.npy')
+    features = np.load('best_word2vec_features.npy')
     df['image_url'] = df['image_url'].fillna("https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/832px-No-Image-Placeholder.svg.png")
 
 
