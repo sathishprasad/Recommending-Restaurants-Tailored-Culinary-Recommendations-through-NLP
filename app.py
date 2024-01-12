@@ -302,14 +302,17 @@ def main():
     st.sidebar.image(img)
 
     state_list = data['State'].unique().tolist()
+    state_list = sorted(state_list)
     state = st.sidebar.selectbox("Choose your State",state_list)
     data = data[data['State']==state]
 
     city_list = data['City'].unique().tolist()
+    city_list = sorted(city_list)
     city = st.sidebar.selectbox("Choose your City",city_list)
     data = data[data['City']==city]
 
     restaurants_list = data['name'].unique().tolist()
+    restaurants_list = sorted(restaurants_list)
     restaurant = st.sidebar.selectbox("Choose your favourite Restaurant",restaurants_list)
     reference_index = data.index[data['name'] == restaurant].tolist()[0]
 
@@ -320,12 +323,14 @@ def main():
         st.session_state['Option'] = 'Yes'
         t_state_list = state_list
         t_state_list.append("All")
+
         target_state = st.sidebar.multiselect("Choose your target State/States",t_state_list,default='All')
         if 'All' not in target_state:
             recommendation_data = recommendation_data[recommendation_data['State'].isin(target_state)]
 
         t_city_list = recommendation_data['City'].unique().tolist()
         t_city_list.append("All")
+        t_city_list = sorted(t_city_list)
         target_city = st.sidebar.multiselect("Choose your target City/Cities",t_city_list ,default='All')
         if 'All' not in target_city:
             recommendation_data = recommendation_data[recommendation_data['City'].isin(target_city)]
