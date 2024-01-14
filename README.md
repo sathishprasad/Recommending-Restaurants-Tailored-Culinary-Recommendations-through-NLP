@@ -28,17 +28,6 @@ TasteMatch is a cutting-edge application designed to revolutionize the way you e
 - **Data Processing Expertise**: Enhanced skills in cleaning and preparing data for NLP.
 - **Streamlit and Docker Proficiency**: Acquired experience in web app development and application containerization.
 
-  
-# TasteMatch: Discover Your Next Favorite Restaurant
-
-## Overview
-TasteMatch is a cutting-edge application designed to revolutionize the way you explore and discover new restaurants. Leveraging advanced Natural Language Processing (NLP) and Word2Vec algorithms, TasteMatch analyzes extensive restaurant reviews to offer you personalized dining recommendations. Say goodbye to the uncertainty of trying new places and hello to a world of culinary adventures tailored to your taste!
-
-## Features
-- **Personalized Restaurant Recommendations**: Get curated restaurant suggestions based on your preferences and past dining experiences.
-- **Advanced NLP Analysis**: Benefit from sophisticated NLP techniques that analyze user reviews for deeper insights.
-- **Intuitive User Interface**: Enjoy a seamless experience with an easy-to-navigate app design.
-
 ## Getting Started
 ### Prerequisites
 - Python 3.x
