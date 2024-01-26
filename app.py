@@ -397,7 +397,7 @@ def show_results():
 
         show_results.rename(columns=new_column_names, inplace=True)
 
-        show_results = show_results[['image_url','Restaurant Name','Recommended,%','Cuisine','Avg Rating','City','State','Address']]
+        show_results = show_results[['image_url','Restaurant Name','Cuisine','Avg Rating','City','State','Address']]
         st.data_editor(
                                 show_results,
                                 column_config={
